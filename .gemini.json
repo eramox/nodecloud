@@ -1,0 +1,74 @@
+{
+  "project": "nodecloud",
+  "language": "python/bash",
+  "rules": {
+    "indentation": 4,
+    "line_length": 100,
+    "avoid_globals": true,
+    "podman_images": [
+      "linuxserver/plex:latest",
+      "python:3.12-slim",
+      "ubuntu:24.04"
+    ],
+    "podman_compose": "v2",
+    "documentation": "generate_docs",
+    "tests": "run_tests",
+    "auto_tests": true,
+    "report_generation": true,
+    "naming_conventions": {
+      "functions": "snake_case",
+      "variables": "snake_case",
+      "classes": "PascalCase"
+    },
+    "security_checks": true
+  },
+  "features": {
+    "auto_refactor": true,
+    "multi_file_edits": true,
+    "full_project_context": true,
+    "inline_suggestions": true,
+    "agent_mode": true
+  },
+  "tasks": {
+    "automation": {
+      "description": "Use makefile to automate project tasks",
+      "execute": true
+    },
+    "reproducibility": {
+      "description": "The project should be easily reproducible on any system with podman installed by simply running make",
+      "execute": true
+    },
+    "independency": {
+      "description": "Use a podman image to install the tools and dependency needed for development",
+      "execute": true
+    },
+    "linting": {
+      "description": "Verify all the files adhere to the specified coding standards for their format",
+      "execute": true
+    },
+    "setup_podman_stack": {
+      "description": "Generate podmanfile and podman-compose.yml for Plex + dependencies",
+      "execute": true
+    },
+    "write_docs": {
+      "description": "Create README and setup documentation in typst format",
+      "execute": true
+    },
+    "process_docs": {
+      "description": "Process the documentation files to ensure clarity and correctness",
+      "execute": true
+    },
+    "generate_docs": {
+      "description": "Generate the documentatin from typst format in pdf",
+      "execute": true
+    },
+    "run_tests": {
+      "description": "Create and run unit/integration tests",
+      "execute": true
+    },
+    "generate_reports": {
+      "description": "Generate project summary and logs",
+      "execute": true
+    }
+  }
+}

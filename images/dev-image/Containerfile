@@ -1,0 +1,37 @@
+# Use Ubuntu 24.04 as the base image for our development environment.
+FROM ubuntu:24.04
+
+# Set non-interactive frontend for package installations
+ARG DEBIAN_FRONTEND=noninteractive
+
+# Install necessary dependencies for documentation generation and general development.
+# - git: for version control
+# - curl: for downloading files
+# - ca-certificates: for HTTPS connections
+# - fontconfig: required by Typst for font management
+# - python3, python3-pip: for Python development and tooling
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    git \
+    curl \
+    ca-certificates \
+    fontconfig \
+    python3 \
+    python3-pip \
+    xz-utils && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install Typst for documentation compilation.
+# We fetch the latest release for Linux x86_64 from GitHub.
+ARG TYPST_VERSION=v0.11.1
+ARG TARGET_ARCH=x86_64-unknown-linux-musl
+RUN curl -fL "https://github.com/typst/typst/releases/download/${TYPST_VERSION}/typst-${TARGET_ARCH}.tar.xz" | \
+    tar -xJvf - -C /usr/local/bin --strip-components=1 && \
+    chmod +x /usr/local/bin/typst
+
+# Set the working directory inside the container.
+WORKDIR /app
+
+# Verify Typst installation.
+RUN typst --version
