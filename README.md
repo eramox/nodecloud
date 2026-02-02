@@ -1,6 +1,7 @@
-# NodeCloud Project
+# NodeCloud
 
 A private, multi-home, family-resilient cloud for sharing files, photos, and documents.
+[![Build Documentation](https://github.com/eramox/nodecloud/actions/workflows/docs.yml/badge.svg)](https://github.com/eramox/nodecloud/actions/workflows/docs.yml)
 
 This repository contains the source code, configuration, and documentation for the NodeCloud project.
 
@@ -28,3 +29,5 @@ make
 ```
 
 This will generate the documentation at `out/main.pdf`.
+
+[**Download Latest Documentation (PDF)**](https://github.com/eramox/nodecloud/raw/docs-build/main.pdf)
