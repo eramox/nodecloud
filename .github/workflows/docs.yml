@@ -1,0 +1,30 @@
+name: Build Documentation
+
+on:
+  push:
+    paths:
+      - 'doc/**'
+      - '.github/workflows/docs.yml'
+  workflow_dispatch:
+
+jobs:
+  build_pdf:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Typst
+        uses: typst-community/setup-typst@v3
+
+      - name: Compile PDF
+        run: |
+          mkdir -p out
+          typst compile doc/main.typ out/main.pdf
+
+      - name: Upload PDF Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nodecloud-documentation
+          path: out/main.pdf
+          retention-days: 5
