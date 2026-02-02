@@ -46,6 +46,10 @@
       "description": "Verify all the files adhere to the specified coding standards for their format",
       "execute": true
     },
+    "quality_checks": {
+      "description": "Feature implemented must be tested and verified to work as expected",
+      "execute": true
+    },
     "setup_podman_stack": {
       "description": "Generate podmanfile and podman-compose.yml for Plex + dependencies",
       "execute": true

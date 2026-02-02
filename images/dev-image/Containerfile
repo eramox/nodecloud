@@ -30,6 +30,20 @@ RUN curl -fL "https://github.com/typst/typst/releases/download/${TYPST_VERSION}/
     tar -xJvf - -C /usr/local/bin --strip-components=1 && \
     chmod +x /usr/local/bin/typst
 
+# Install Python dependencies for testing and configuration.
+RUN pip3 install --no-cache-dir --break-system-packages \
+    pytest \
+    pyyaml \
+    podman-compose \
+    flake8
+
+# Create a non-root user for development.
+# Remove the default 'ubuntu' user (UID 1000) to avoid conflict, then create 'devuser'.
+RUN userdel -r ubuntu && useradd -m -s /bin/bash -u 1000 devuser
+
+# Switch to the non-root user.
+USER devuser
+
 # Set the working directory inside the container.
 WORKDIR /app
 

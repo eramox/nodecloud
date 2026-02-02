@@ -13,12 +13,20 @@ PROJECT_NAME := nodecloud
 DEV_IMAGE_NAME := $(PROJECT_NAME)-dev
 DEV_IMAGE_TAG := latest
 PODMAN_COMPOSE := podman-compose
+OUT_DIR ?= out
+ABS_OUT_DIR := $(abspath $(OUT_DIR))
+
+# Common Podman flags to reduce repetition
+PODMAN_FLAGS := --rm --userns=keep-id --workdir "/app"
+DEV_RUN := podman run $(PODMAN_FLAGS)
+# Podman Volume definitions
+VOL_APP_RO := --volume "$(PROJECT_ROOT):/app:ro"
+VOL_APP_RW := --volume "$(PROJECT_ROOT):/app"
+VOL_OUT    := --volume "$(ABS_OUT_DIR):/out"
 
 # Documentation files
 DOC_SRC_REL := doc/main.typ
 DOC_SRC := $(PROJECT_ROOT)$(DOC_SRC_REL)
-OUT_DIR ?= out
-ABS_OUT_DIR := $(abspath $(OUT_DIR))
 DOC_PDF := $(ABS_OUT_DIR)/main.pdf
 
 # Default target to build the project.
@@ -54,27 +62,31 @@ dev-image:
 docs: dev-image $(DOC_SRC)
 	@echo "Generating documentation from $(DOC_SRC)..."
 	@mkdir -p $(ABS_OUT_DIR)
-	@podman run --rm \
-		--volume "$(PROJECT_ROOT):/app:ro" \
-		--volume "$(ABS_OUT_DIR):/out" \
-		--workdir "/app" \
+	@$(DEV_RUN) \
+		$(VOL_APP_RO) \
+		$(VOL_OUT) \
 		$(DEV_IMAGE_NAME):$(DEV_IMAGE_TAG) \
 		typst compile $(DOC_SRC_REL) /out/main.pdf
 	@echo "Documentation generated at $(DOC_PDF)."
 
 # Run unit and integration tests.
-# Placeholder for the actual test command.
 .PHONY: test
-test:
+test: docs
 	@echo "Running project tests..."
-	# @podman run --rm -v "$(PROJECT_ROOT):/app" $(DEV_IMAGE_NAME):$(DEV_IMAGE_TAG) [your-test-command]
+	@$(DEV_RUN) \
+		$(VOL_APP_RW) \
+		$(DEV_IMAGE_NAME):$(DEV_IMAGE_TAG) \
+		pytest tests $(ARGS)
 
 # Lint the project files to ensure they adhere to coding standards.
 # Placeholder for the actual linting command.
 .PHONY: lint
-lint:
+lint: dev-image
 	@echo "Linting project files..."
-	# @podman run --rm -v "$(PROJECT_ROOT):/app" $(DEV_IMAGE_NAME):$(DEV_IMAGE_TAG) [your-lint-command]
+	@$(DEV_RUN) \
+		$(VOL_APP_RO) \
+		$(DEV_IMAGE_NAME):$(DEV_IMAGE_TAG) \
+		flake8 . | sed 's#^\./##'
 
 # Use podman-compose to start the application stack (Plex, etc.).
 # Assumes a 'podman-compose.yml' file exists.
